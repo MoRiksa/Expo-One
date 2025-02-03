@@ -1,6 +1,37 @@
-# Welcome to your Expo app 👋
+# Expo-One
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Description
+
+Expo-One is a project developed for the Android H1 course. It is designed to demonstrate the capabilities of the Expo framework in building cross-platform mobile applications.
+
+## Installation
+
+To install and run this project, follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/MoRiksa/Expo-One.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd Expo-One
+   ```
+3. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+## Usage
+
+To start the development server and run the application, use the following command:
+
+```bash
+npm start
+```
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Get started
 

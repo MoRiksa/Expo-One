@@ -1,0 +1,102 @@
+import React, { ReactNode } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
+interface AuthFormProps {
+  title: string;
+  buttonText: string;
+  onSubmit: () => void;
+  children: ReactNode;
+}
+
+const AuthForm: React.FC<AuthFormProps> = ({
+  title,
+  buttonText,
+  onSubmit,
+  children,
+}) => {
+  const navigation = useNavigation<any>();
+
+  return (
+    <View style={{ flex: 1, margin: 14 }}>
+      <View>
+        <Image
+          source={{
+            uri: "https://cdn3.pixelcut.app/7/20/uncrop_hero_bdf08a8ca6.jpg",
+          }}
+          style={{ width: 100, height: 100, margin: 14, borderRadius: 100 }}
+        />
+      </View>
+      <View style={{ width: "70%", marginBottom: 14 }}>
+        <Text style={{ fontWeight: "bold", fontSize: 34 }}>
+          Welcome to<Text style={{ color: "purple" }}> MoRiksa.co</Text>
+        </Text>
+      </View>
+      <Text
+        style={{
+          fontSize: 16,
+          fontWeight: "bold",
+          marginVertical: 14,
+          opacity: 0.5,
+        }}
+      >
+        {title}
+      </Text>
+      {children}
+      <TouchableOpacity
+        style={{
+          backgroundColor: "purple",
+          padding: 10,
+          borderRadius: 15,
+          alignItems: "center",
+          marginVertical: 7,
+          marginTop: 50,
+        }}
+        onPress={onSubmit}
+      >
+        <View style={{ height: 40, justifyContent: "center" }}>
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
+            {buttonText}
+          </Text>
+        </View>
+      </TouchableOpacity>
+      <Text style={{ textAlign: "center", marginVertical: 14 }}>
+        or Continue with
+      </Text>
+      <TouchableOpacity
+        style={{
+          backgroundColor: "white",
+          padding: 10,
+          borderRadius: 15,
+          alignItems: "center",
+          flexDirection: "row",
+          justifyContent: "center",
+          borderWidth: 1,
+          borderColor: "purple",
+          marginVertical: 7,
+          pointerEvents: "auto",
+        }}
+      >
+        <Image
+          source={{
+            uri: "https://e7.pngegg.com/pngimages/337/722/png-clipart-google-search-google-account-google-s-google-play-google-company-text-thumbnail.png",
+          }}
+          style={{ width: 30, height: 30 }}
+        />
+        <Text style={{ color: "purple", fontWeight: "bold", fontSize: 16 }}>
+          Google
+        </Text>
+      </TouchableOpacity>
+      <View style={{ flex: 1, justifyContent: "flex-end" }}>
+        <Text style={{ textAlign: "center", marginVertical: 14 }}>
+          Don't have an account?{" "}
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={{ color: "purple" }}>Register</Text>
+          </TouchableOpacity>
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+export default AuthForm;
