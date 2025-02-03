@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 interface AuthFormProps {
@@ -60,9 +60,17 @@ const AuthForm: React.FC<AuthFormProps> = ({
           </Text>
         </View>
       </TouchableOpacity>
-      <Text style={{ textAlign: "center", marginVertical: 14 }}>
-        or Continue with
-      </Text>
+      <View
+        style={{ columnGap: 12, flexDirection: "row", alignItems: "center" }}
+      >
+        <View style={[authStyles.divider, { flexGrow: 1 }]} />
+
+        <Text style={{ textAlign: "center", marginVertical: 14 }}>
+          or Continue with
+        </Text>
+        <View style={[authStyles.divider, { flexGrow: 1 }]} />
+      </View>
+
       <TouchableOpacity
         style={{
           backgroundColor: "white",
@@ -98,5 +106,15 @@ const AuthForm: React.FC<AuthFormProps> = ({
     </View>
   );
 };
+
+const authStyles = StyleSheet.create({
+  divider: {
+    height: 1,
+    backgroundColor: "gray",
+    marginVertical: 14,
+    opacity: 0.5,
+    marginTop: 18,
+  },
+});
 
 export default AuthForm;

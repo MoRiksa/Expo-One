@@ -8,19 +8,29 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ForgotPasswordScreen() {
+  const navigation = useNavigation<any>();
   const [selectedOption, setSelectedOption] = useState("phone");
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate("Login")}
+      >
         <Ionicons name="chevron-back" size={24} color="black" />
       </TouchableOpacity>
       <Text style={styles.title}>Forgot password 🤔</Text>
       <Text style={styles.subtitle}>
         Select which contact details should we use to reset your password.
       </Text>
+
+      <Image
+        source={require("../../assets/images/undraw_access-account_aydp.svg")}
+        style={styles.image}
+      />
 
       <View style={styles.optionContainer}>
         <TouchableOpacity
@@ -84,8 +94,11 @@ export default function ForgotPasswordScreen() {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.continueButton}>
-        <Text style={styles.continueButtonText}>Continue</Text>
+      <TouchableOpacity
+        style={styles.continueButton}
+        onPress={() => navigation.navigate("Auth")}
+      >
+        <Text style={styles.continueButtonText}>Verify</Text>
       </TouchableOpacity>
     </View>
   );
@@ -164,5 +177,11 @@ const styles = StyleSheet.create({
   selectedIconBox: {
     backgroundColor: "purple",
     borderColor: "#4a90e2",
+  },
+  image: {
+    width: 300,
+    height: 300,
+    alignSelf: "center",
+    marginBottom: 20,
   },
 });

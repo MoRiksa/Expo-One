@@ -53,7 +53,9 @@ export default function LoginScreen() {
         }}
       >
         <TouchableOpacity onPress={() => navigation.navigate("Forgot")}>
-          <Text style={{ color: "purple" }}>Forgot Password</Text>
+          <Text>
+            Forgot <Text style={{ color: "purple" }}>Password?</Text>
+          </Text>
         </TouchableOpacity>
       </View>
     </AuthForm>
