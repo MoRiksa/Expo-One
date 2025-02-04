@@ -1,21 +1,20 @@
 import React, { ReactNode } from "react";
-import { Image, Text, TouchableOpacity, View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import {
+  Image,
+  Text,
+  View,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 
 interface AuthFormProps {
   title: string;
-  buttonText: string;
-  onSubmit: () => void;
   children: ReactNode;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({
-  title,
-  buttonText,
-  onSubmit,
-  children,
-}) => {
-  const navigation = useNavigation<any>();
+const AuthForm: React.FC<AuthFormProps> = ({ title, children }) => {
+  const { width } = Dimensions.get("window");
 
   return (
     <View style={{ flex: 1, margin: 14 }}>
@@ -27,7 +26,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
           style={{ width: 100, height: 100, margin: 14, borderRadius: 100 }}
         />
       </View>
-      <View style={{ width: "70%", marginBottom: 14 }}>
+      <View style={{ width: width * 0.7, marginBottom: 14 }}>
         <Text style={{ fontWeight: "bold", fontSize: 34 }}>
           Welcome to<Text style={{ color: "purple" }}> MoRiksa.co</Text>
         </Text>
@@ -43,23 +42,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
         {title}
       </Text>
       {children}
-      <TouchableOpacity
-        style={{
-          backgroundColor: "purple",
-          padding: 10,
-          borderRadius: 15,
-          alignItems: "center",
-          marginVertical: 7,
-          marginTop: 50,
-        }}
-        onPress={onSubmit}
-      >
-        <View style={{ height: 40, justifyContent: "center" }}>
-          <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
-            {buttonText}
-          </Text>
-        </View>
-      </TouchableOpacity>
       <View
         style={{ columnGap: 12, flexDirection: "row", alignItems: "center" }}
       >
@@ -95,14 +77,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
           Google
         </Text>
       </TouchableOpacity>
-      <View style={{ flex: 1, justifyContent: "flex-end" }}>
-        <Text style={{ textAlign: "center", marginVertical: 14 }}>
-          Don't have an account?{" "}
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={{ color: "purple" }}>Register</Text>
-          </TouchableOpacity>
-        </Text>
-      </View>
     </View>
   );
 };

@@ -38,7 +38,10 @@ export default function AuthVerifyScreen() {
           </TouchableOpacity>
         </Text>
       </View>
-      <TouchableOpacity style={styles.continueButton}>
+      <TouchableOpacity
+        style={styles.continueButton}
+        onPress={() => navigation.navigate("Attendance")}
+      >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
     </View>

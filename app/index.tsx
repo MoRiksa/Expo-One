@@ -8,6 +8,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ForgotPasswordScreen from "./screens/ForgotScreen";
 import AuthVerifyScreen from "./screens/AuthScreen";
+import AttendanceScreen from "./screens/AttendanceScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ function App() {
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Forgot" component={ForgotPasswordScreen} />
           <Stack.Screen name="Auth" component={AuthVerifyScreen} />
+          <Stack.Screen name="Attendance" component={AttendanceScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </NavigationIndependentTree>
