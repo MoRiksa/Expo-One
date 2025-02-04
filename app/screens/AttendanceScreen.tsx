@@ -122,6 +122,54 @@ const AttendanceScreen = () => {
     }
   };
 
+  const handleCheckOut = async () => {
+    try {
+      const email = await AsyncStorage.getItem("user_email");
+      if (!email) {
+        Alert.alert("Error", "Email not found.");
+        return;
+      }
+
+      const now = new Date();
+      const gmtPlus7 = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      const jam_keluar = gmtPlus7.toISOString().split("T")[1].split(".")[0];
+      const tanggal = gmtPlus7.toISOString().split("T")[0];
+
+      const response = await fetch(
+        `${BASE_URL}/absensi/checkout/nip/${email}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            jam_keluar: jam_keluar,
+            tanggal: tanggal,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        Alert.alert("Check-out failed", data.message || "An error occurred");
+        return;
+      }
+
+      const data = await response.json();
+      Alert.alert(
+        "Check-out successful",
+        data.message || "You have checked out successfully"
+      );
+      setAttendanceData((prevData) => ({
+        ...prevData,
+        jam_keluar: jam_keluar,
+      }));
+    } catch (error) {
+      Alert.alert("Check-out failed", "An error occurred");
+      console.error("Check-out error:", error);
+    }
+  };
+
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (evt, gestureState) => {
@@ -138,7 +186,13 @@ const AttendanceScreen = () => {
         }).start(async () => {
           setSwipeStatus(!swipeStatus);
           if (!swipeStatus) {
-            await handleCheckIn();
+            if (attendanceData.jam_masuk && !attendanceData.jam_keluar) {
+              await handleCheckOut();
+            } else if (!attendanceData.jam_masuk) {
+              await handleCheckIn();
+            } else {
+              Alert.alert("Error", "You have already checked out.");
+            }
           }
           Animated.timing(swipePosition, {
             toValue: 0,
@@ -281,12 +335,12 @@ const AttendanceScreen = () => {
         </View>
       </View>
 
-      {/* Swipe to Check In */}
+      {/* Swipe to Check In/Out */}
       <View style={styles.swipeButtonWrapper}>
         <Animated.View
           style={[
             styles.swipeButtonContainer,
-            { backgroundColor: backgroundColor },
+            { backgroundColor: attendanceData.jam_masuk ? "red" : "purple" },
           ]}
         >
           <Animated.View
@@ -299,7 +353,9 @@ const AttendanceScreen = () => {
             <FontAwesome5 name="arrow-right" size={18} color="purple" />
           </Animated.View>
           <Text style={styles.swipeButtonText}>
-            {swipeStatus ? "Swipe to Check Out" : "Swipe to Check In"}
+            {attendanceData.jam_masuk
+              ? "Swipe to Check Out"
+              : "Swipe to Check In"}
           </Text>
         </Animated.View>
       </View>
