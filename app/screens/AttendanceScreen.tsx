@@ -20,6 +20,12 @@ const BASE_URL =
     ? "http://192.168.1.10:8000"
     : "http://localhost:8000";
 
+interface Activity {
+  jam_masuk: string;
+  jam_keluar: string;
+  tanggal: string;
+}
+
 const AttendanceScreen = () => {
   const { width } = Dimensions.get("window");
   const [swipeStatus, setSwipeStatus] = useState(false);
@@ -33,6 +39,7 @@ const AttendanceScreen = () => {
     jam_masuk: "",
     jam_keluar: "",
   });
+  const [activityData, setActivityData] = useState<Activity[]>([]);
 
   useEffect(() => {
     const fetchAttendanceData = async () => {
@@ -73,7 +80,40 @@ const AttendanceScreen = () => {
       }
     };
 
+    const fetchActivityData = async () => {
+      try {
+        const email = await AsyncStorage.getItem("user_email");
+        if (!email) {
+          Alert.alert("Error", "Email not found.");
+          return;
+        }
+
+        const response = await fetch(`${BASE_URL}/absensi/list/nip/${email}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          Alert.alert(
+            "Failed to fetch activity data",
+            data.message || "An error occurred"
+          );
+          return;
+        }
+
+        const data = await response.json();
+        setActivityData(data);
+      } catch (error) {
+        Alert.alert("Failed to fetch activity data", "An error occurred");
+        console.error("Fetch activity data error:", error);
+      }
+    };
+
     fetchAttendanceData();
+    fetchActivityData();
   }, []);
 
   const handleCheckIn = async () => {
@@ -211,6 +251,12 @@ const AttendanceScreen = () => {
     },
   });
 
+  const formatDateToGMTPlus7 = (dateString: string) => {
+    const date = new Date(dateString);
+    const gmtPlus7 = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+    return gmtPlus7.toISOString().split("T")[0];
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
@@ -315,24 +361,31 @@ const AttendanceScreen = () => {
         <Text style={styles.viewAll}>View All</Text>
       </View>
       <View style={styles.activityContainer}>
-        <View style={styles.activityCard}>
-          <FontAwesome5 name="sign-in-alt" size={24} color="purple" />
-          <View style={styles.activityInfo}>
-            <Text style={styles.activityTitle}>Check In</Text>
-            <Text style={styles.activityTime}>10:00 am</Text>
-            <Text style={styles.activityDate}>April 17, 2023</Text>
+        {activityData.map((activity, index) => (
+          <View key={index} style={styles.activityCard}>
+            <FontAwesome5 name="sign-in-alt" size={24} color="purple" />
+            <View style={styles.activityInfo}>
+              <Text style={styles.activityTitle}>
+                Check in:{" "}
+                <Text style={styles.activityTime}>
+                  {activity.jam_masuk} WIB
+                </Text>
+              </Text>
+              <Text style={styles.activityTitle}>
+                Check out:{" "}
+                <Text style={styles.activityTime}>
+                  {activity.jam_keluar} WIB
+                </Text>
+              </Text>
+              {/* <Text style={[styles.activityDate, { fontWeight: "bold" }]}>
+                {formatDateToGMTPlus7(activity.tanggal)}
+              </Text> */}
+            </View>
+            <Text style={[styles.activityDate, { fontWeight: "bold" }]}>
+              {formatDateToGMTPlus7(activity.tanggal)}
+            </Text>
           </View>
-          <Text style={styles.cardStatus}>On Time</Text>
-        </View>
-        <View style={styles.activityCard}>
-          <FontAwesome5 name="sign-in-alt" size={24} color="purple" />
-          <View style={styles.activityInfo}>
-            <Text style={styles.activityTitle}>Break In</Text>
-            <Text style={styles.activityTime}>12:30 am</Text>
-            <Text style={styles.activityDate}>April 17, 2023</Text>
-          </View>
-          <Text style={styles.cardStatus}>On Time</Text>
-        </View>
+        ))}
       </View>
 
       {/* Swipe to Check In/Out */}
