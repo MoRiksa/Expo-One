@@ -291,6 +291,10 @@ const AttendanceScreen = () => {
     return gmtPlus7.toISOString().split("T")[0];
   };
 
+  const calculateTotalDays = () => {
+    return activityData.length;
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header Section */}
@@ -384,7 +388,7 @@ const AttendanceScreen = () => {
         <View style={styles.attendanceCard}>
           <FontAwesome5 name="calendar-alt" size={24} color="purple" />
           <Text style={styles.cardTitle}>Total Days</Text>
-          <Text style={styles.cardTime}>28</Text>
+          <Text style={styles.cardTime}>{calculateTotalDays()}</Text>
           <Text style={styles.cardStatus}>Working Days</Text>
         </View>
       </View>
