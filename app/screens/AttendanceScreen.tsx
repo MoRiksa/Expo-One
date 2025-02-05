@@ -116,6 +116,38 @@ const AttendanceScreen = () => {
     fetchActivityData();
   }, []);
 
+  const refreshActivityData = async () => {
+    try {
+      const email = await AsyncStorage.getItem("user_email");
+      if (!email) {
+        Alert.alert("Error", "Email not found.");
+        return;
+      }
+
+      const response = await fetch(`${BASE_URL}/absensi/list/nip/${email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        Alert.alert(
+          "Failed to fetch activity data",
+          data.message || "An error occurred"
+        );
+        return;
+      }
+
+      const data = await response.json();
+      setActivityData(data);
+    } catch (error) {
+      Alert.alert("Failed to fetch activity data", "An error occurred");
+      console.error("Fetch activity data error:", error);
+    }
+  };
+
   const handleCheckIn = async () => {
     try {
       const email = await AsyncStorage.getItem("user_email");
@@ -156,6 +188,7 @@ const AttendanceScreen = () => {
         ...prevData,
         jam_masuk: jam_masuk,
       }));
+      await refreshActivityData();
     } catch (error) {
       Alert.alert("Check-in failed", "An error occurred");
       console.error("Check-in error:", error);
@@ -204,6 +237,7 @@ const AttendanceScreen = () => {
         ...prevData,
         jam_keluar: jam_keluar,
       }));
+      await refreshActivityData();
     } catch (error) {
       Alert.alert("Check-out failed", "An error occurred");
       console.error("Check-out error:", error);
@@ -356,44 +390,53 @@ const AttendanceScreen = () => {
       </View>
 
       {/* Your Activity */}
-      <View style={styles.activitySection}>
-        <Text style={styles.sectionTitle}>Your Activity</Text>
-        <Text style={styles.viewAll}>View All</Text>
-      </View>
-      <View style={styles.activityContainer}>
-        {activityData.map((activity, index) => (
-          <View key={index} style={styles.activityCard}>
-            <FontAwesome5 name="sign-in-alt" size={24} color="purple" />
-            <View style={styles.activityInfo}>
-              <Text style={styles.activityTitle}>
-                Check in:{" "}
-                <Text style={styles.activityTime}>
-                  {activity.jam_masuk} WIB
-                </Text>
-              </Text>
-              <Text style={styles.activityTitle}>
-                Check out:{" "}
-                <Text style={styles.activityTime}>
-                  {activity.jam_keluar} WIB
-                </Text>
-              </Text>
-              {/* <Text style={[styles.activityDate, { fontWeight: "bold" }]}>
-                {formatDateToGMTPlus7(activity.tanggal)}
-              </Text> */}
-            </View>
-            <Text style={[styles.activityDate, { fontWeight: "bold" }]}>
-              {formatDateToGMTPlus7(activity.tanggal)}
-            </Text>
+      {activityData.length > 0 && (
+        <View>
+          <View style={styles.activitySection}>
+            <Text style={styles.sectionTitle}>Your Activity</Text>
+            <Text style={styles.viewAll}>View All</Text>
           </View>
-        ))}
-      </View>
+          <View style={styles.activityContainer}>
+            {activityData.map((activity, index) => (
+              <View key={index} style={styles.activityCard}>
+                <FontAwesome5 name="sign-in-alt" size={24} color="purple" />
+                <View style={styles.activityInfo}>
+                  <Text>
+                    Check in:{" "}
+                    <Text style={styles.activityTitle}>
+                      {activity.jam_masuk} WIB
+                    </Text>
+                  </Text>
+                  {activity.jam_keluar && (
+                    <Text>
+                      Check out:{" "}
+                      <Text style={styles.activityTitle}>
+                        {activity.jam_keluar} WIB
+                      </Text>
+                    </Text>
+                  )}
+                </View>
+                <Text style={[styles.activityDate, { fontWeight: "bold" }]}>
+                  {formatDateToGMTPlus7(activity.tanggal)}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
 
       {/* Swipe to Check In/Out */}
       <View style={styles.swipeButtonWrapper}>
         <Animated.View
           style={[
             styles.swipeButtonContainer,
-            { backgroundColor: attendanceData.jam_masuk ? "red" : "purple" },
+            {
+              backgroundColor: attendanceData.jam_masuk
+                ? attendanceData.jam_keluar
+                  ? "gray"
+                  : "red"
+                : "purple",
+            },
           ]}
         >
           <Animated.View
@@ -401,13 +444,15 @@ const AttendanceScreen = () => {
               styles.arrowContainer,
               { transform: [{ translateX: swipePosition }] },
             ]}
-            {...panResponder.panHandlers}
+            {...(attendanceData.jam_keluar ? {} : panResponder.panHandlers)}
           >
             <FontAwesome5 name="arrow-right" size={18} color="purple" />
           </Animated.View>
           <Text style={styles.swipeButtonText}>
             {attendanceData.jam_masuk
-              ? "Swipe to Check Out"
+              ? attendanceData.jam_keluar
+                ? "Checked Out"
+                : "Swipe to Check Out"
               : "Swipe to Check In"}
           </Text>
         </Animated.View>
